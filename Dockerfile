@@ -7,7 +7,8 @@ RUN apk add --no-cache openjdk21 ffmpeg && \
     addgroup -g ${GID} jdownloader && \
     adduser -D -u ${UID} -G jdownloader jdownloader
 
-ADD scripts/entrypoint.sh /entrypoint.sh
+ADD entrypoint.sh /entrypoint.sh
+ADD scripts /scripts
 ADD config /JDownloader/cfg
 
 RUN mkdir -p /Downloads && \

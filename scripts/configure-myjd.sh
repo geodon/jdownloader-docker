@@ -1,30 +1,16 @@
 #!/bin/sh
 
-# Helper function to read variable from file or directly
-file_env() {
-    var="$1"
-    fileVar="${var}_FILE"
-    def="${2:-}"
-    
-    eval fileVarValue="\$$fileVar"
-    eval varValue="\$$var"
-    
-    if [ -n "$fileVarValue" ] && [ -f "$fileVarValue" ]; then
-        val="$(cat "$fileVarValue")"
-        eval export "$var=\"$val\""
-    elif [ -z "$varValue" ]; then
-        if [ $# -ge 2 ]; then
-            eval export "$var=\"$def\""
-        else
-            echo "Error: $var or $fileVar must be set" >&2
-            exit 1
-        fi
-    fi
-}
+# Script to configure MyJDownloader settings
 
+# Import helper functions
+. /scripts/_file-env.sh
+
+# Read required variables
 file_env 'MYJD_EMAIL'
 file_env 'MYJD_PASSWORD'
-file_env 'MYJD_DEVICENAME' 'JDownloader'
+
+# Set default for devicename if not provided
+: ${MYJD_DEVICENAME:=JDownloader}
 
 CONFIG_FILE="cfg/org.jdownloader.api.myjdownloader.MyJDownloaderSettings.json"
 
@@ -58,7 +44,3 @@ else
         sed -i 's/}/,\n  "devicename":"'"${MYJD_DEVICENAME}"'"\n}/' "$CONFIG_FILE"
     fi
 fi
-
-test -f JDownloader.jar || ( wget -nv --timeout=5 -O JDownloader.jar http://installer.jdownloader.org/JDownloader.jar || rm -f JDownloader.jar )
-
-exec java -jar JDownloader.jar -console -noerr -norestart
