@@ -16,5 +16,5 @@ file_env 'MYJD_PASSWORD'
 # Configure MyJDownloader properties
 MYJD_CONFIG="org.jdownloader.api.myjdownloader.MyJDownloaderSettings.json"
 json_set_property "$MYJD_CONFIG" "email" "$MYJD_EMAIL"
-json_set_property "$MYJD_CONFIG" "password" "$MYJD_PASSWORD"
+json_set_property "$MYJD_CONFIG" "password" "$MYJD_PASSWORD" "<hidden>"
 json_set_property "$MYJD_CONFIG" "devicename" "$MYJD_DEVICENAME"

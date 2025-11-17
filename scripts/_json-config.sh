@@ -4,13 +4,15 @@
 mkdir -p cfg
 
 # Helper function to set a JSON property in a config file
-# Usage: json_set_property 'filename.json' 'propertyName' 'value'
+# Usage: json_set_property 'filename.json' 'propertyName' 'value' ['display_value']
 # Works in cfg/ directory
 # Values 'true' and 'false' are treated as booleans, numbers as numbers, everything else as strings
+# Optional 4th parameter: display value for logs (use to hide sensitive data)
 json_set_property() {
     filename="$1"
     property="$2"
     value="$3"
+    display_value="${4:-$value}"
     
     file="cfg/$filename"
     
@@ -33,7 +35,7 @@ json_set_property() {
     # Create file with single property if it doesn't exist or is empty
     if [ ! -f "$file" ] || [ ! -s "$file" ]; then
         jq -nc --arg prop "$property" $jq_args '{($prop): $val}' > "$file"
-        echo "Created $file with $property=$value"
+        printf "[DOCKER-INIT] CREATE\t%s\t%s\t%s\n" "$file" "$property" "$display_value"
         return
     fi
     
@@ -45,9 +47,9 @@ json_set_property() {
         jq -c --arg prop "$property" $jq_args '.[$prop] = $val' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
         
         if [ -z "$current_value" ]; then
-            echo "Added $property=$value to $file"
+            printf "[DOCKER-INIT] ADD\t%s\t%s\t%s\n" "$file" "$property" "$display_value"
         else
-            echo "Updated $property=$value in $file"
+            printf "[DOCKER-INIT] UPDATE\t%s\t%s\t%s\n" "$file" "$property" "$display_value"
         fi
     fi
 }
