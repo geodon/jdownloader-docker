@@ -3,18 +3,17 @@ FROM alpine
 ARG UID=1000
 ARG GID=1000
 
-RUN apk add --no-cache openjdk21 ffmpeg && \
+RUN apk add --no-cache openjdk21 ffmpeg jq && \
     addgroup -g ${GID} jdownloader && \
     adduser -D -u ${UID} -G jdownloader jdownloader
 
 ADD entrypoint.sh /entrypoint.sh
 ADD scripts /scripts
-ADD config /JDownloader/cfg
 
-RUN mkdir -p /Downloads && \
+RUN mkdir -p /JDownloader /Downloads && \
     chown -R jdownloader:jdownloader /JDownloader /Downloads
 
-VOLUME /JDownloader/cfg
+VOLUME /JDownloader
 VOLUME /Downloads
 
 EXPOSE 3129
