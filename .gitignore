@@ -1,0 +1,5 @@
+# Local development data
+.local/
+
+# Environment variables
+.env

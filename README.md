@@ -1,6 +1,55 @@
 # jdownloader-docker
 Dockerized JDownloader with quality-of-life enhancements
 
+## Development Setup
+
+For local development and testing, use the provided Makefile:
+
+### Quick Start
+
+1. Copy the environment template:
+   ```bash
+   cp .env.example .env
+   ```
+
+2. Edit `.env` with your MyJDownloader credentials:
+   ```bash
+   MYJD_EMAIL=your@email.com
+   MYJD_PASSWORD=your_password
+   MYJD_DEVICENAME=JDownloader-Docker
+   ```
+
+3. Run the container:
+   ```bash
+   make run
+   ```
+
+### Makefile Targets
+
+- `make build` - Build the Docker image with your current user's UID/GID
+- `make run` - Build, start container, and follow logs (stops previous instance)
+- `make logs` - Follow logs of running container (reconnects on restarts)
+- `make restart` - Restart the container
+- `make stop` - Stop and remove the container
+- `make clean` - Remove container, image, and local volumes
+
+### Environment Configuration
+
+The `.env` file supports:
+
+```bash
+# MyJDownloader credentials (required)
+MYJD_EMAIL=user@example.com
+MYJD_PASSWORD=your_password
+
+# Docker configuration (optional)
+MYJD_DEVICENAME=JDownloader-Docker
+IMAGE_NAME=jdownloader
+CONTAINER_NAME=jdtest
+```
+
+Local volumes are created in `.local/` directory (git-ignored).
+
 ## Build
 
 The image supports the following build arguments to customize the user that runs JDownloader:
