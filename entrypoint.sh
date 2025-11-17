@@ -6,6 +6,12 @@
 # Configure general settings
 /scripts/configure-general.sh
 
+# Configure extensions to install
+/scripts/configure-extensions.sh
+
+# Configure EventScripter extension
+/scripts/configure-eventscripter.sh
+
 # Download JDownloader JAR if needed
 /scripts/download-jar.sh
 

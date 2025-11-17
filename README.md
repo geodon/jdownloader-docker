@@ -141,3 +141,19 @@ By default, JDownloader clients connect through the MyJDownloader cloud service.
    - Example: If your host is at `192.168.1.100`, add that IP address
 
 This allows the UI to connect directly to JDownloader without routing through the cloud, which can be faster and more reliable on a local network.
+
+## Features
+
+### EventScripter Extension
+
+The container automatically installs and configures the EventScripter extension with an auto-update script that:
+
+- Runs every 10 minutes
+- Checks if JDownloader updates are available
+- Only updates when JDownloader is idle (no downloads, crawling, or extraction in progress)
+- Automatically restarts JDownloader after updating
+
+**Note:** EventScripter is installed on first startup but requires one container restart to become active. After the initial restart, it will be fully functional and the auto-update script will run automatically.
+
+The auto-update script can be customized by editing `scripts/eventscripter-autoupdate.js` before building the image.
+
