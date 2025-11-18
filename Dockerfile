@@ -3,7 +3,7 @@ FROM alpine
 ARG UID=1000
 ARG GID=1000
 
-RUN apk add --no-cache openjdk21 ffmpeg jq && \
+RUN apk add --no-cache openjdk21-jre ffmpeg jq && \
     addgroup -g ${GID} jdownloader && \
     adduser -D -u ${UID} -G jdownloader jdownloader
 
