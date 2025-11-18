@@ -1,159 +1,103 @@
 # jdownloader-docker
-Dockerized JDownloader with quality-of-life enhancements
 
-## Development Setup
+Docker image for running JDownloader 2 with automatic configuration, MyJDownloader support, and quality-of-life enhancements.
 
-For local development and testing, use the provided Makefile:
+## Features
 
-### Quick Start
+- Runs JDownloader 2 in a container with persistent config and downloads
+- MyJDownloader remote control support (required)
+- Automatic EventScripter extension install and auto-update script
+- Secure secrets support for credentials
+- Runs as non-root user (configurable UID/GID)
+- Easy to use with Docker or Docker Compose
 
-1. Copy the environment template:
-   ```bash
-   cp .env.example .env
-   ```
+---
 
-2. Edit `.env` with your MyJDownloader credentials:
-   ```bash
-   MYJD_EMAIL=your@email.com
-   MYJD_PASSWORD=your_password
-   MYJD_DEVICENAME=JDownloader-Docker
-   ```
+## Usage
 
-3. Run the container:
-   ```bash
-   make run
-   ```
-
-### Makefile Targets
-
-- `make build` - Build the Docker image with your current user's UID/GID
-- `make run` - Build, start container, and follow logs (stops previous instance)
-- `make logs` - Follow logs of running container (reconnects on restarts)
-- `make restart` - Restart the container
-- `make stop` - Stop and remove the container
-- `make clean` - Remove container, image, and local volumes
-
-### Environment Configuration
-
-The `.env` file supports:
-
-```bash
-# MyJDownloader credentials (required)
-MYJD_EMAIL=user@example.com
-MYJD_PASSWORD=your_password
-
-# Docker configuration (optional)
-MYJD_DEVICENAME=JDownloader-Docker
-IMAGE_NAME=jdownloader
-CONTAINER_NAME=jdtest
-```
-
-Local volumes are created in `.local/` directory (git-ignored).
-
-## Build
-
-The image supports the following build arguments to customize the user that runs JDownloader:
-
-- `UID`: User ID for the jdownloader user (default: `1000`)
-- `GID`: Group ID for the jdownloader group (default: `1000`)
-
-### Building with custom UID/GID
-
-To build the image with your current user's UID/GID:
-
-```bash
-docker build --build-arg UID=$(id -u) --build-arg GID=$(id -g) -t jdownloader .
-```
-
-This ensures that files created in mounted volumes will have the correct ownership matching your host user.
-
-### Building with default values
-
-If you don't specify the arguments, the image will use UID/GID 1000:
-
-```bash
-docker build -t jdownloader .
-```
-
-## Configuration
-
-### Environment Variables
-
-The container requires the following environment variables to configure MyJDownloader:
-
-- `MYJD_EMAIL` (**required**): Your MyJDownloader account email
-- `MYJD_PASSWORD` (**required**): Your MyJDownloader account password
-- `MYJD_DEVICENAME` (optional): Device name to identify this instance (default: `JDownloader`)
-
-#### Using direct environment variables
+### Quick start with Docker
 
 ```bash
 docker run -d \
+  --name jdownloader \
   --restart unless-stopped \
-  -e MYJD_EMAIL=user@example.com \
-  -e MYJD_PASSWORD=mypassword \
-  -e MYJD_DEVICENAME=MyServer \
-  -v /path/to/config:/JDownloader/cfg \
+  -e MYJD_EMAIL=your@email.com \
+  -e MYJD_PASSWORD=your_password \
+  -e MYJD_DEVICENAME=MyJDownloader \
+  -v /path/to/config:/JDownloader \
   -v /path/to/downloads:/Downloads \
-  jdownloader
+  -p 3129:3129 \
+  geodonz/jdownloader:latest
 ```
 
 #### Using Docker secrets (recommended for production)
 
 ```bash
 docker run -d \
+  --name jdownloader \
   --restart unless-stopped \
   -e MYJD_EMAIL_FILE=/run/secrets/jd-email \
   -e MYJD_PASSWORD_FILE=/run/secrets/jd-password \
   --secret jd-email \
   --secret jd-password \
-  -v /path/to/config:/JDownloader/cfg \
+  -v /path/to/config:/JDownloader \
   -v /path/to/downloads:/Downloads \
-  jdownloader
+  -p 3129:3129 \
+  geodonz/jdownloader:latest
 ```
 
-For each variable, you can use either:
-- The variable directly with the value (e.g., `MYJD_EMAIL=value`)
-- The variable with `_FILE` suffix pointing to a file containing the value (e.g., `MYJD_EMAIL_FILE=/path/to/file`)
+---
 
-The configuration is updated every time the container starts, so you can change credentials without recreating volumes.
+### Example docker-compose.yml
 
-### Direct Connection (Optional)
+```yaml
+version: '3.8'
+services:
+  jdownloader:
+    image: geodonz/jdownloader:latest
+    container_name: jdownloader
+    restart: unless-stopped
+    environment:
+      - MYJD_EMAIL=your@email.com
+      - MYJD_PASSWORD=your_password
+      - MYJD_DEVICENAME=MyJDownloader
+    ports:
+      - 3129:3129
+    volumes:
+      - ./config:/JDownloader
+      - ./downloads:/Downloads
+```
 
-By default, JDownloader clients connect through the MyJDownloader cloud service. If you want to enable direct connection from the UI to the JDownloader instance:
+---
 
-1. **Expose port 3129** when running the container:
-   ```bash
-   docker run -d \
-     --restart unless-stopped \
-     -p 3129:3129 \
-     -e MYJD_EMAIL=user@example.com \
-     -e MYJD_PASSWORD=mypassword \
-     -v /path/to/config:/JDownloader/cfg \
-     -v /path/to/downloads:/Downloads \
-     jdownloader
-   ```
+## Environment variables
 
-2. **Configure custom device IPs** in the JDownloader UI:
-   - Go to Settings → Advanced Settings
-   - Search for `customdeviceips`
-   - Add the IP address(es) that clients should use to connect to the host
-   - Example: If your host is at `192.168.1.100`, add that IP address
+- `MYJD_EMAIL` (**required**): Your MyJDownloader account email
+- `MYJD_PASSWORD` (**required**): Your MyJDownloader account password
+- `MYJD_DEVICENAME` (optional): Device name (default: JDownloader)
 
-This allows the UI to connect directly to JDownloader without routing through the cloud, which can be faster and more reliable on a local network.
+You can also use `_FILE` variants for secrets (e.g. `MYJD_EMAIL_FILE`).
 
-## Features
+## Volumes
 
-### EventScripter Extension
+- `/JDownloader`: JDownloader configuration and data (persistent)
+- `/Downloads`: Download destination
 
-The container automatically installs and configures the EventScripter extension with an auto-update script that:
+## Ports
 
-- Runs every 10 minutes
-- Checks if JDownloader updates are available
-- Only updates when JDownloader is idle (no downloads, crawling, or extraction in progress)
-- Automatically restarts JDownloader after updating
+- `3129/tcp`: (optional) Direct connection for JDownloader UI
 
-**Note:** EventScripter is installed on first startup but requires one container restart to become active. After the initial restart, it will be fully functional and the auto-update script will run automatically.
+## Notes
 
-The auto-update script can be customized by editing `scripts/eventscripter-autoupdate.js` before building the image.
+- The container auto-installs the EventScripter extension and a safe auto-update script.
+- EventScripter is enabled after the first container restart.
+- The first time the auto-update script runs, it will request permission to call the JDownloader API. You must grant this permission in the MyJDownloader interface for the script to work.
+- All configuration is applied on every container start.
+- For advanced configuration, see the [DEVELOPER.md](./DEVELOPER.md) file.
+
+---
+
+## License
+
+MIT License. See [LICENSE](./LICENSE).
 
