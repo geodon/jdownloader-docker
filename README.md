@@ -1,4 +1,4 @@
-# jdownloader-docker
+# Awesome Dockerized JDownloader
 
 Docker image for running JDownloader 2 with automatic configuration, MyJDownloader support, and quality-of-life enhancements.
 
@@ -24,7 +24,7 @@ docker run -d \
   -e MYJD_EMAIL=your@email.com \
   -e MYJD_PASSWORD=your_password \
   -e MYJD_DEVICENAME=MyJDownloader \
-  -v /path/to/config:/JDownloader \
+  -v /path/to/data:/JDownloader \
   -v /path/to/downloads:/Downloads \
   -p 3129:3129 \
   geodonz/jdownloader:latest
@@ -40,7 +40,7 @@ docker run -d \
   -e MYJD_PASSWORD_FILE=/run/secrets/jd-password \
   --secret jd-email \
   --secret jd-password \
-  -v /path/to/config:/JDownloader \
+  -v /path/to/data:/JDownloader \
   -v /path/to/downloads:/Downloads \
   -p 3129:3129 \
   geodonz/jdownloader:latest
@@ -64,7 +64,7 @@ services:
     ports:
       - 3129:3129
     volumes:
-      - ./config:/JDownloader
+      - ./data:/JDownloader
       - ./downloads:/Downloads
 ```
 
@@ -93,11 +93,11 @@ You can also use `_FILE` variants for secrets (e.g. `MYJD_EMAIL_FILE`).
 - EventScripter is enabled after the first container restart.
 - The first time the auto-update script runs, it will request permission to call the JDownloader API. You must grant this permission in the MyJDownloader interface for the script to work.
 - All configuration is applied on every container start.
-- For advanced configuration, see the [DEVELOPER.md](./DEVELOPER.md) file.
+- For advanced configuration, see the [DEVELOPER.md](https://github.com/geodon/jdownloader-docker/blob/main/DEVELOPER.md) file.
 
 ---
 
 ## License
 
-MIT License. See [LICENSE](./LICENSE).
+MIT License. See [LICENSE](https://github.com/geodon/jdownloader-docker/blob/main/LICENSE).
 
