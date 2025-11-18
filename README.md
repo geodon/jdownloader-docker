@@ -99,5 +99,5 @@ You can also use `_FILE` variants for secrets (e.g. `MYJD_EMAIL_FILE`).
 
 ## License
 
-MIT License. See [LICENSE](https://github.com/geodon/jdownloader-docker/blob/main/LICENSE).
+Apache License 2.0. See [LICENSE](https://github.com/geodon/jdownloader-docker/blob/main/LICENSE).
 
