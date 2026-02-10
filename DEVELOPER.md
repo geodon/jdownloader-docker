@@ -22,6 +22,7 @@
 - `_json-config.sh`: Utilities for manipulating JSON with jq
 - `configure-myjd.sh`: Configures MyJDownloader credentials
 - `configure-general.sh`: Applies general settings
+- `configure-extraction.sh`: Configures Archive Extractor defaults
 - `configure-extensions.sh`: Marks extensions for installation
 - `configure-eventscripter.sh`: Configures EventScripter and scripts
 

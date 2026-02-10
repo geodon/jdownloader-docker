@@ -75,6 +75,7 @@ services:
 - `MYJD_EMAIL` (**required**): Your MyJDownloader account email
 - `MYJD_PASSWORD` (**required**): Your MyJDownloader account password
 - `MYJD_DEVICENAME` (optional): Device name (default: JDownloader)
+- `DISABLE_ARCHIVE_DELETE` (optional): Keep archive files after extraction (`false` by default; set `true` to disable deletion)
 
 You can also use `_FILE` variants for secrets (e.g. `MYJD_EMAIL_FILE`).
 
@@ -100,4 +101,3 @@ You can also use `_FILE` variants for secrets (e.g. `MYJD_EMAIL_FILE`).
 ## License
 
 Apache License 2.0. See [LICENSE](https://github.com/geodon/jdownloader-docker/blob/main/LICENSE).
-

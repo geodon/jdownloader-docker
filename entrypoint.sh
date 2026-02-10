@@ -9,6 +9,9 @@
 # Configure extensions to install
 /scripts/configure-extensions.sh
 
+# Configure Archive Extractor defaults
+/scripts/configure-extraction.sh
+
 # Configure EventScripter extension
 /scripts/configure-eventscripter.sh
 
