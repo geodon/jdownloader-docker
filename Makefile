@@ -25,7 +25,6 @@ run: build stop
 		-v $$(pwd)/$(VOLUME_DIR)/downloads:/Downloads \
 		$(IMAGE_NAME)
 	@echo "Container $(CONTAINER_NAME) started"
-	@$(MAKE) logs
 
 logs:
 	@echo "Following logs for $(CONTAINER_NAME) (Ctrl+C to stop)..."
