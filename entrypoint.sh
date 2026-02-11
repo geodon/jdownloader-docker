@@ -18,5 +18,5 @@
 # Download JDownloader JAR if needed
 /scripts/download-jar.sh
 
-# Start JDownloader
-exec java -jar JDownloader.jar -console -noerr -norestart
+# Start JDownloader in headless mode
+exec java -Djava.awt.headless=true -jar JDownloader.jar -console -noerr -norestart
