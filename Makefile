@@ -26,7 +26,7 @@ run: build stop
 		$(IMAGE_NAME)
 	@echo "Container $(CONTAINER_NAME) started"
 
-logs:
+logsf:
 	@echo "Following logs for $(CONTAINER_NAME) (Ctrl+C to stop)..."
 	@while docker ps -a --format '{{.Names}}' | grep -q '^$(CONTAINER_NAME)$$'; do \
 		docker logs -f $(CONTAINER_NAME) 2>&1 || sleep 1; \
