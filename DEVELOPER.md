@@ -25,6 +25,7 @@
 - `configure-extraction.sh`: Configures Archive Extractor defaults
 - `configure-extensions.sh`: Marks extensions for installation
 - `configure-eventscripter.sh`: Configures EventScripter and scripts
+- `cleanup-update-cache.sh`: Manual maintenance script to clear updater cache/state
 
 ## CI/CD
 

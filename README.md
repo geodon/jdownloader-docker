@@ -94,6 +94,7 @@ You can also use `_FILE` variants for secrets (e.g. `MYJD_EMAIL_FILE`).
 - EventScripter is enabled after the first container restart.
 - The first time the auto-update script runs, it will request permission to call the JDownloader API. You must grant this permission in the MyJDownloader interface for the script to work.
 - All configuration is applied on every container start.
+- To reset broken updater state manually, run `docker exec <container_name> /scripts/cleanup-update-cache.sh` and then restart the container.
 - For advanced configuration, see the [DEVELOPER.md](https://github.com/geodon/jdownloader-docker/blob/main/DEVELOPER.md) file.
 
 ---

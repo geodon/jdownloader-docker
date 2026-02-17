@@ -13,9 +13,6 @@ file_env 'MYJD_PASSWORD'
 # Set default for devicename if not provided
 : ${MYJD_DEVICENAME:=JDownloader}
 
-# Clean MyJDownloader session files before reconfiguring
-/scripts/cleanup-myjd-session.sh
-
 # Configure MyJDownloader properties
 MYJD_CONFIG="org.jdownloader.api.myjdownloader.MyJDownloaderSettings.json"
 json_set_property "$MYJD_CONFIG" "email" "$MYJD_EMAIL"
