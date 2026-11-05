@@ -30,7 +30,7 @@
 ## CI/CD
 
 - GitHub Actions: `.github/workflows/docker-publish.yml`
-  - Builds and pushes to Docker Hub on every push to main
+  - Builds and pushes to Docker Hub on every push to master
   - Syncs README.md as overview
 
 ## Testing
