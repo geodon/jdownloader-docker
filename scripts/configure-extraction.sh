@@ -7,6 +7,22 @@
 
 # Configure extraction settings
 EXTRACTION_CONFIG="org.jdownloader.extensions.extraction.ExtractionExtension.json"
+LINKGRABBER_CONFIG="org.jdownloader.gui.views.linkgrabber.addlinksdialog.LinkgrabberSettings.json"
+
+# Leave the existing default untouched unless explicitly configured.
+if [ "${AUTO_EXTRACTION_ENABLED+x}" ]; then
+    case "$AUTO_EXTRACTION_ENABLED" in
+        true|TRUE|1|yes|YES)
+            json_set_property "$LINKGRABBER_CONFIG" "autoextractionenabled" "true"
+            ;;
+        false|FALSE|0|no|NO)
+            json_set_property "$LINKGRABBER_CONFIG" "autoextractionenabled" "false"
+            ;;
+        *)
+            printf "[DOCKER-INIT] WARN\tInvalid AUTO_EXTRACTION_ENABLED='%s', leaving existing setting unchanged\n" "$AUTO_EXTRACTION_ENABLED"
+            ;;
+    esac
+fi
 
 # Optional behavior:
 # - false (default): delete archive files after successful extraction

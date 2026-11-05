@@ -75,6 +75,7 @@ services:
 - `MYJD_EMAIL` (**required**): Your MyJDownloader account email
 - `MYJD_PASSWORD` (**required**): Your MyJDownloader account password
 - `MYJD_DEVICENAME` (optional): Device name (default: JDownloader)
+- `AUTO_EXTRACTION_ENABLED` (optional): Set the default automatic extraction behavior to `true` or `false`. If unset, leave the existing JDownloader setting unchanged. Individual archives can override this default.
 - `DISABLE_ARCHIVE_DELETE` (optional): Keep archive files after extraction (`false` by default; set `true` to disable deletion)
 
 You can also use `_FILE` variants for secrets (e.g. `MYJD_EMAIL_FILE`).
