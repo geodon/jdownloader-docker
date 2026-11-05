@@ -78,7 +78,7 @@ services:
 - `AUTO_EXTRACTION_ENABLED` (optional): Set the default automatic extraction behavior to `true` or `false`. If unset, leave the existing JDownloader setting unchanged. Individual archives can override this default.
 - `DISABLE_ARCHIVE_DELETE` (optional): Keep archive files after extraction (`false` by default; set `true` to disable deletion)
 
-You can also use `_FILE` variants for secrets (e.g. `MYJD_EMAIL_FILE`).
+For credentials, `MYJD_EMAIL_FILE` and `MYJD_PASSWORD_FILE` can supply the values from files. The other variables do not support `_FILE` variants.
 
 ## Volumes
 
