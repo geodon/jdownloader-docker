@@ -73,10 +73,11 @@ kill_java() {
 }
 
 # Newest JDownloader session log created after this start.  JDownloader log
-# directories are named with a millisecond timestamp, so lexical sort works.
+# session directories are named with a millisecond timestamp; logs/updatehistory
+# also lives under logs and must not be selected.
 current_log_file() {
     [ -d "${BASE_DIR}/logs" ] || return 1
-    latest_dir=$(ls -1d "${BASE_DIR}"/logs/*/ 2>/dev/null | sort | tail -n 1)
+    latest_dir=$(ls -1d "${BASE_DIR}"/logs/[0-9]*/ 2>/dev/null | sort | tail -n 1)
     [ -n "${latest_dir}" ] || return 1
     if [ -n "${PREVIOUS_LOG_DIR}" ] && [ "${latest_dir}" = "${PREVIOUS_LOG_DIR}" ]; then
         return 1
