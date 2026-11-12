@@ -15,8 +15,14 @@
 # Configure EventScripter extension
 /scripts/configure-eventscripter.sh
 
-# Download JDownloader JAR if needed
+# Configure update behavior
+/scripts/configure-updates.sh
+
+# Recover from previous failed starts before touching the installation
+/scripts/prepare-start.sh
+
+# Verify the launcher and download it when missing or corrupt
 /scripts/download-jar.sh
 
-# Start JDownloader in headless mode
-exec java -Djava.awt.headless=true -jar JDownloader.jar -console -noerr -norestart
+# Start JDownloader under a supervisor that survives its internal restarts
+exec /scripts/start-jdownloader.sh

@@ -17,6 +17,7 @@ restart:
 run: build stop
 	@mkdir -p $(VOLUME_DIR)/jdownloader $(VOLUME_DIR)/downloads
 	docker run -d --name $(CONTAINER_NAME) \
+		--init \
 		--restart unless-stopped \
 		-e MYJD_EMAIL=$(MYJD_EMAIL) \
 		-e MYJD_PASSWORD=$(MYJD_PASSWORD) \
