@@ -65,9 +65,11 @@ fi
 printf '%s\n' "${failures}" > "${FAIL_FILE}"
 touch "${START_MARKER}"
 
-# Remember the newest log directory that already exists, so the supervisor can
-# tell when JDownloader creates the log for the current run.
-previous_log_dir=$(ls -1d "${BASE_DIR}"/logs/*/ 2>/dev/null | sort | tail -n 1)
+# Remember the newest session log directory that already exists, so the
+# supervisor can tell when JDownloader creates the log for the current run.
+# Only directories starting with the millisecond timestamp are sessions;
+# logs/updatehistory is not a session and must be ignored.
+previous_log_dir=$(ls -1d "${BASE_DIR}"/logs/[0-9]*/ 2>/dev/null | sort | tail -n 1)
 printf '%s\n' "${previous_log_dir}" > "${STATE_DIR}/previous-log-dir"
 
 printf "[DOCKER-RECOVERY] Start attempt ready (previous failures: %s)\n" "${failures}"
