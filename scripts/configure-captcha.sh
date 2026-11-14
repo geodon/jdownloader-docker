@@ -1,8 +1,8 @@
 #!/bin/sh
 set -e
 
-# Install the glm-ocr JAC method, which solves fileboom.me and k2s.cc image
-# captchas with an Ollama server, only when OLLAMA_URL is set.
+# Install the glm-ocr JAC method, which solves the image captchas of the hosts
+# listed in jacinfo.xml with an Ollama server, only when OLLAMA_URL is set.
 #
 # JDownloader writes the captcha to input.png, runs glm-ocr.sh without
 # arguments from the method directory and reads the answer from result.txt.
