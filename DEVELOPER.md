@@ -68,7 +68,9 @@ of leaving a live JVM in a permanent error loop.
 JDownloader supports external captcha solvers through JAC methods: each
 directory in `jd/captcha/methods/` holds a `jacinfo.xml` with the supported
 hosts and the command to run. `scripts/jac/glm-ocr/jacinfo.xml` declares the
-`glm-ocr` method for `fileboom.me` and `k2s.cc`.
+`glm-ocr` method for the Keep2Share family: `k2s.cc`, `fileboom.me` and
+`tezfiles.com`. Their JDownloader plugins share the same Keep2Share API
+captcha, and each alternative domain maps to one of these host names.
 
 `configure-captcha.sh` copies that file to
 `/JDownloader/jd/captcha/methods/glm-ocr/` and links `glm-ocr.sh` next to it.
