@@ -15,6 +15,9 @@
 # Configure EventScripter extension
 /scripts/configure-eventscripter.sh
 
+# Configure the glm-ocr captcha solver
+/scripts/configure-captcha.sh
+
 # Configure update behavior
 /scripts/configure-updates.sh
 

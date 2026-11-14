@@ -1,0 +1,4 @@
+<jDownloader>
+  <method type="extern" os="linux" name="glm-ocr" services="fileboom.me;k2s.cc" />
+  <command cmd="jd/captcha/methods/glm-ocr/glm-ocr.sh" src="jd/captcha/methods/glm-ocr/input.png" dst="jd/captcha/methods/glm-ocr/result.txt" />
+</jDownloader>
