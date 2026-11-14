@@ -7,6 +7,7 @@ Docker image for running JDownloader 2 with automatic configuration, MyJDownload
 - Runs JDownloader 2 in a container with persistent config and downloads
 - MyJDownloader remote control support (required)
 - Automatic EventScripter extension install and auto-update script
+- Optional automatic solving of fileboom.me and k2s.cc image captchas with glm-ocr on Ollama
 - Supervises JDownloader restarts and recovers automatically from broken updates
 - Secure secrets support for credentials
 - Runs as non-root user (configurable UID/GID)
@@ -94,6 +95,7 @@ effect.
 - `JD_FATAL_ERROR_THRESHOLD` (optional): Number of fatal class/linkage errors in one watch interval that triggers repair (default `5`).
 - `JD_WATCH_INTERVAL` (optional): Supervisor polling interval in seconds (default `5`).
 - `JD_SHUTDOWN_TIMEOUT` (optional): Seconds to wait for a self-update helper during container shutdown (default `120`).
+- `OLLAMA_URL` (optional): URL of an Ollama server with the `glm-ocr` model, for example `http://ollama:11434`. When set, fileboom.me and k2s.cc image captchas are solved automatically. Leave unset to disable it.
 
 For credentials, `MYJD_EMAIL_FILE` and `MYJD_PASSWORD_FILE` can supply the values from files. The other variables do not support `_FILE` variants.
 
@@ -110,6 +112,7 @@ For credentials, `MYJD_EMAIL_FILE` and `MYJD_PASSWORD_FILE` can supply the value
 
 - The container auto-installs the EventScripter extension and a safe auto-update script.
 - EventScripter is enabled after the first container restart.
+- When `OLLAMA_URL` is set, the container installs the `glm-ocr` captcha method in `jd/captcha/methods/glm-ocr` inside the data volume. JDownloader uses it for fileboom.me and k2s.cc image captchas; other hosts and interactive captchas (reCAPTCHA, hCaptcha) keep their usual solvers. When `OLLAMA_URL` is unset, the method is removed on the next start.
 - The first time the auto-update script runs, it will request permission to call the JDownloader API. You must grant this permission in the MyJDownloader interface for the script to work.
 - All configuration is applied on every container start.
 - JDownloader runs under a supervisor. When JDownloader restarts itself to install an update, the container stays alive until every Java process, including the update helper, has finished. This prevents the mixed `JDownloader.jar`/`Core.jar` states that cause `IllegalAccessError` and `NoClassDefFoundError` restart loops.

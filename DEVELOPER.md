@@ -24,6 +24,8 @@
 - `configure-extraction.sh`: Configures Archive Extractor defaults
 - `configure-extensions.sh`: Marks extensions for installation
 - `configure-eventscripter.sh`: Configures EventScripter and scripts
+- `configure-captcha.sh`: Installs the `glm-ocr` JAC captcha method when `OLLAMA_URL` is set and removes it otherwise
+- `glm-ocr.sh`: JAC method command; recognises `input.png` with the `glm-ocr` model on Ollama and writes the text to `result.txt`
 - `configure-updates.sh`: Disables update-on-exit/background writes and optionally jar diffs
 - `prepare-start.sh`: Tracks failed starts and requests installation repair when needed
 - `download-jar.sh`: Verifies/downloads `JDownloader.jar` and resets mixed installations
@@ -60,6 +62,27 @@ configuration and download lists are preserved.
 `NoClassDefFoundError`, `IllegalAccessError`, `ClassNotFoundException`,
 `LinkageError` or `JDLauncherFailedException` entries triggers a repair instead
 of leaving a live JVM in a permanent error loop.
+
+## Captcha solving
+
+JDownloader supports external captcha solvers through JAC methods: each
+directory in `jd/captcha/methods/` holds a `jacinfo.xml` with the supported
+hosts and the command to run. `scripts/jac/glm-ocr/jacinfo.xml` declares the
+`glm-ocr` method for `fileboom.me` and `k2s.cc`.
+
+`configure-captcha.sh` copies that file to
+`/JDownloader/jd/captcha/methods/glm-ocr/` and links `glm-ocr.sh` next to it.
+For each image captcha of those hosts, JDownloader writes `input.png` in that
+directory, runs `glm-ocr.sh` from it and reads the answer from `result.txt`.
+The script removes whitespace from the recognised text and leaves `result.txt`
+empty when Ollama fails. Runs are serialised per method. Empty answers are
+ignored and the captcha falls back to the other solvers.
+
+To test the OCR manually with an image from the host, run:
+
+```bash
+docker exec -i -w /tmp <container_name> sh -c 'cat >input.png && /scripts/glm-ocr.sh; cat result.txt' <captcha.png
+```
 
 ## CI/CD
 

@@ -22,6 +22,7 @@ run: build stop
 		-e MYJD_EMAIL=$(MYJD_EMAIL) \
 		-e MYJD_PASSWORD=$(MYJD_PASSWORD) \
 		-e MYJD_DEVICENAME=$(MYJD_DEVICENAME) \
+		-e OLLAMA_URL=$(OLLAMA_URL) \
 		-v $$(pwd)/$(VOLUME_DIR)/jdownloader:/JDownloader \
 		-v $$(pwd)/$(VOLUME_DIR)/downloads:/Downloads \
 		$(IMAGE_NAME)
