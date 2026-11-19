@@ -89,8 +89,12 @@ docker exec -i -w /tmp <container_name> sh -c 'cat >input.png && /scripts/glm-oc
 ## CI/CD
 
 - GitHub Actions: `.github/workflows/docker-publish.yml`
-  - Builds and pushes to Docker Hub on every push to master
-  - Syncs README.md as overview
+  - Builds and pushes `latest` and a date tag to Docker Hub on every push to
+    master
+  - Builds and pushes `pr-<number>` on every push to a pull request from this
+    repository, without touching `latest`, so the change can be deployed and
+    tested before merging. Pull requests from forks are not built
+  - Syncs README.md as overview on master builds
 
 ## Testing
 
