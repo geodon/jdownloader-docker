@@ -3,6 +3,8 @@ name: Build and Publish Docker Image
 on:
   push:
     branches: [ master ]
+  pull_request:
+    branches: [ master ]
   schedule:
     - cron: "0 4 * * 1"
   workflow_dispatch:
@@ -10,6 +12,8 @@ on:
 jobs:
   resolve-base-digests:
     runs-on: ubuntu-latest
+    # Pull requests from forks get no secrets and must not publish images.
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
     outputs:
       base_digests: ${{ steps.resolve.outputs.base_digests }}
       resolution_failed: ${{ steps.resolve.outputs.resolution_failed }}
@@ -247,9 +251,12 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ${{ secrets.DOCKERHUB_USERNAME }}/${{ needs.decide-build.outputs.image_name }}
+          # Pull requests publish only pr-<number> for testing; latest and the
+          # date tag are left for master builds.
           tags: |
-            type=raw,value=latest
-            type=raw,value={{date 'YYYYMMDD-HHmmss'}}
+            type=raw,value=latest,enable=${{ github.event_name != 'pull_request' }}
+            type=raw,value={{date 'YYYYMMDD-HHmmss'}},enable=${{ github.event_name != 'pull_request' }}
+            type=ref,event=pr
 
       - name: Build and push
         uses: docker/build-push-action@v6
@@ -266,6 +273,7 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Update Docker Hub description
+        if: ${{ github.event_name != 'pull_request' }}
         uses: peter-evans/dockerhub-description@v4
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
