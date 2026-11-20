@@ -97,6 +97,7 @@ effect.
 - `JD_WATCH_INTERVAL` (optional): Supervisor polling interval in seconds (default `5`).
 - `JD_SHUTDOWN_TIMEOUT` (optional): Seconds to wait for a self-update helper during container shutdown (default `120`).
 - `OLLAMA_URL` (optional): URL of an Ollama server with the `glm-ocr` model, for example `http://ollama:11434`. When set, k2s.cc, fileboom.me and tezfiles.com image captchas are solved automatically. Leave unset to disable it.
+- `GLM_OCR_SAMPLES_DIR` (optional): Directory where the captcha solver keeps a copy of each image and its answer in `answers.tsv`, to build a test set for comparing OCR models, for example `/JDownloader/captcha-samples` to keep it in the data volume. Leave unset to disable it.
 
 For credentials, `MYJD_EMAIL_FILE` and `MYJD_PASSWORD_FILE` can supply the values from files. The other variables do not support `_FILE` variants.
 
