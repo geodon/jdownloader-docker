@@ -13,6 +13,9 @@ RECONNECT_CONFIG="jd.controlling.reconnect.ReconnectConfig.json"
 json_set_property "$GENERAL_CONFIG" "defaultdownloadfolder" "/Downloads/<jd:packagename>"
 json_set_property "$GENERAL_CONFIG" "cleanupafterdownloadaction" "CLEANUP_AFTER_PACKAGE_HAS_FINISHED"
 json_set_property "$GENERAL_CONFIG" "autostartdownloadoption" "ALWAYS"
+# Skip the autostart countdown dialog: in the container, downloads did not
+# start until the dialog was answered from the MyJDownloader UI.
+json_set_property "$GENERAL_CONFIG" "showcountdownonautostartdownloads" "false"
 json_set_property "$GENERAL_CONFIG" "hashcheckenabled" "true"
 json_set_property "$GENERAL_CONFIG" "iffileexistsaction" "SKIP_FILE"
 json_set_property "$GENERAL_CONFIG" "createfoldertrigger" "ON_DOWNLOAD_START"
