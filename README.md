@@ -8,6 +8,7 @@ Docker image for running JDownloader 2 with automatic configuration, MyJDownload
 - MyJDownloader remote control support (required)
 - Automatic EventScripter extension install and auto-update script
 - Optional automatic solving of k2s.cc, fileboom.me and tezfiles.com image captchas with glm-ocr on Ollama
+- Starts downloads automatically on startup, without a confirmation dialog
 - Supervises JDownloader restarts and recovers automatically from broken updates
 - Secure secrets support for credentials
 - Runs as non-root user (configurable UID/GID)
