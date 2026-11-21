@@ -3,6 +3,8 @@
 # input.png with glm-ocr on Ollama and write it without whitespace to
 # result.txt, both in the working directory.
 # OLLAMA_URL selects the server (default http://localhost:11434).
+# GLM_OCR_SAMPLES_DIR, when set, keeps each image and its answer there to
+# build a test set for comparing OCR models.
 set -eu
 
 # Truncate before querying so a failure does not leave a stale answer.
@@ -20,4 +22,15 @@ if error=$(printf '%s\n' "$response" | jq -er '.error // empty'); then
   exit 1
 fi
 
-printf '%s\n' "$response" | jq -r '.response | gsub("\\s"; "")'
+answer=$(printf '%s\n' "$response" | jq -r '.response | gsub("\\s"; "")')
+printf '%s\n' "$answer"
+
+# A failure to keep the sample must not discard the answer.
+if [ -n "${GLM_OCR_SAMPLES_DIR:-}" ]; then
+  sample="$(date -u +%Y%m%dT%H%M%SZ)_$$"
+  {
+    mkdir -p "$GLM_OCR_SAMPLES_DIR" \
+      && cp input.png "$GLM_OCR_SAMPLES_DIR/$sample.png" \
+      && printf '%s\t%s\n' "$sample" "$answer" >>"$GLM_OCR_SAMPLES_DIR/answers.tsv"
+  } || echo "Could not keep sample $sample in $GLM_OCR_SAMPLES_DIR" >&2
+fi

@@ -80,6 +80,12 @@ The script removes whitespace from the recognised text and leaves `result.txt`
 empty when Ollama fails. Runs are serialised per method. Empty answers are
 ignored and the captcha falls back to the other solvers.
 
+When `GLM_OCR_SAMPLES_DIR` is set, the script also copies each image to
+`<timestamp>_<pid>.png` in that directory and appends the name and the answer,
+separated by a tab, to `answers.tsv`. The verdict of each answer is in the
+hoster plugin log: `Captcha accepted` or `Invalid captcha code`. Accepted
+answers give labelled images for comparing other OCR models.
+
 To test the OCR manually with an image from the host, run:
 
 ```bash
