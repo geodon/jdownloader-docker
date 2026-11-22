@@ -12,6 +12,9 @@
 # without exactly 6 characters is requested again, up to GLM_OCR_ATTEMPTS
 # times per backend (default 5); then, or when a backend fails, the next
 # backend is tried.
+#
+# GLM_OCR_SAMPLES_DIR, when set, keeps each image and its answer there to
+# build a test set for comparing OCR models.
 set -eu
 
 LENGTH=6
@@ -92,3 +95,13 @@ for backend in ${GLM_OCR_BACKENDS:-openrouter ollama}; do
 done
 [ -n "$answer" ] || exit 1
 printf '%s\n' "$answer"
+
+# A failure to keep the sample must not discard the answer.
+if [ -n "${GLM_OCR_SAMPLES_DIR:-}" ]; then
+  sample="$(date -u +%Y%m%dT%H%M%SZ)_$$"
+  {
+    mkdir -p "$GLM_OCR_SAMPLES_DIR" \
+      && cp input.png "$GLM_OCR_SAMPLES_DIR/$sample.png" \
+      && printf '%s\t%s\t%s\t%s\n' "$sample" "$answer" "$backend" "$attempt" >>"$GLM_OCR_SAMPLES_DIR/answers.tsv"
+  } || echo "Could not keep sample $sample in $GLM_OCR_SAMPLES_DIR" >&2
+fi

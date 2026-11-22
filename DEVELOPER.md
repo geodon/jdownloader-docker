@@ -98,6 +98,14 @@ Ollama answers the same image the same way, so its retries rarely help. Runs are
 method. Empty answers are ignored and the captcha falls back to the other
 solvers.
 
+When `GLM_OCR_SAMPLES_DIR` is set, the script also copies each image to
+`<timestamp>_<pid>.png` in that directory and appends the name, the answer,
+the backend and the attempt that gave it, separated by tabs, to
+`answers.tsv`. The verdict of each answer is in the hoster plugin log:
+`Captcha accepted` or `Invalid captcha code`; `Download count files exceed`
+also comes after a valid captcha, but `Download is not available` does not
+tell. Correct answers give labelled images for comparing other OCR models.
+
 To test the OCR manually with an image from the host, run:
 
 ```bash
