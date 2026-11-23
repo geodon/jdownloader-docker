@@ -7,7 +7,7 @@ Docker image for running JDownloader 2 with automatic configuration, MyJDownload
 - Runs JDownloader 2 in a container with persistent config and downloads
 - MyJDownloader remote control support (required)
 - Automatic EventScripter extension install and auto-update script
-- Optional automatic solving of k2s.cc, fileboom.me and tezfiles.com image captchas with glm-ocr on Ollama
+- Optional automatic solving of k2s.cc, fileboom.me and tezfiles.com image captchas with a vision model on OpenRouter or glm-ocr on Ollama
 - Starts downloads automatically on startup, without a confirmation dialog
 - Supervises JDownloader restarts and recovers automatically from broken updates
 - Secure secrets support for credentials
@@ -96,7 +96,11 @@ effect.
 - `JD_FATAL_ERROR_THRESHOLD` (optional): Number of fatal class/linkage errors in one watch interval that triggers repair (default `5`).
 - `JD_WATCH_INTERVAL` (optional): Supervisor polling interval in seconds (default `5`).
 - `JD_SHUTDOWN_TIMEOUT` (optional): Seconds to wait for a self-update helper during container shutdown (default `120`).
-- `OLLAMA_URL` (optional): URL of an Ollama server with the `glm-ocr` model, for example `http://ollama:11434`. When set, k2s.cc, fileboom.me and tezfiles.com image captchas are solved automatically. Leave unset to disable it.
+- `OPENROUTER_API_KEY` (optional): OpenRouter API key. When set, k2s.cc, fileboom.me and tezfiles.com image captchas are solved automatically with `OPENROUTER_MODEL`.
+- `OPENROUTER_MODEL` (optional): OpenRouter model for captchas (default `z-ai/glm-5.3-flash`).
+- `OLLAMA_URL` (optional): URL of an Ollama server with the `glm-ocr` model, for example `http://ollama:11434`. When set, the same captchas are solved with it.
+- `GLM_OCR_BACKENDS` (optional): Order in which the captcha solver tries the configured backends, separated by spaces (default `openrouter ollama`). Answers are reduced to letters and digits; one without 6 characters is requested again, and after the last attempt or an error the next backend is tried.
+- `GLM_OCR_ATTEMPTS` (optional): Requests per backend while the answer does not have 6 characters (default `5`). Leave `OPENROUTER_API_KEY` and `OLLAMA_URL` unset to disable captcha solving.
 
 For credentials, `MYJD_EMAIL_FILE` and `MYJD_PASSWORD_FILE` can supply the values from files. The other variables do not support `_FILE` variants.
 
@@ -113,7 +117,7 @@ For credentials, `MYJD_EMAIL_FILE` and `MYJD_PASSWORD_FILE` can supply the value
 
 - The container auto-installs the EventScripter extension and a safe auto-update script.
 - EventScripter is enabled after the first container restart.
-- When `OLLAMA_URL` is set, the container installs the `glm-ocr` captcha method in `jd/captcha/methods/glm-ocr` inside the data volume. JDownloader uses it for k2s.cc, fileboom.me and tezfiles.com image captchas; other hosts and interactive captchas (reCAPTCHA, hCaptcha) keep their usual solvers. When `OLLAMA_URL` is unset, the method is removed on the next start.
+- When `OPENROUTER_API_KEY` or `OLLAMA_URL` is set, the container installs the `glm-ocr` captcha method in `jd/captcha/methods/glm-ocr` inside the data volume. JDownloader uses it for k2s.cc, fileboom.me and tezfiles.com image captchas; other hosts and interactive captchas (reCAPTCHA, hCaptcha) keep their usual solvers. When both are unset, the method is removed on the next start.
 - The first time the auto-update script runs, it will request permission to call the JDownloader API. You must grant this permission in the MyJDownloader interface for the script to work.
 - All configuration is applied on every container start.
 - JDownloader runs under a supervisor. When JDownloader restarts itself to install an update, the container stays alive until every Java process, including the update helper, has finished. This prevents the mixed `JDownloader.jar`/`Core.jar` states that cause `IllegalAccessError` and `NoClassDefFoundError` restart loops.
