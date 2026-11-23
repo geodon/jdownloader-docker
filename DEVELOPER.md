@@ -24,8 +24,8 @@
 - `configure-extraction.sh`: Configures Archive Extractor defaults
 - `configure-extensions.sh`: Marks extensions for installation
 - `configure-eventscripter.sh`: Configures EventScripter and scripts
-- `configure-captcha.sh`: Installs the `glm-ocr` JAC captcha method when `OLLAMA_URL` is set and removes it otherwise
-- `glm-ocr.sh`: JAC method command; recognises `input.png` with the `glm-ocr` model on Ollama and writes the text to `result.txt`
+- `configure-captcha.sh`: Installs the `glm-ocr` JAC captcha method when `OPENROUTER_API_KEY` or `OLLAMA_URL` is set and removes it otherwise
+- `glm-ocr.sh`: JAC method command; recognises `input.png` with OpenRouter or the `glm-ocr` model on Ollama and writes the text to `result.txt`
 - `configure-updates.sh`: Disables update-on-exit/background writes and optionally jar diffs
 - `prepare-start.sh`: Tracks failed starts and requests installation repair when needed
 - `download-jar.sh`: Verifies/downloads `JDownloader.jar` and resets mixed installations
@@ -76,9 +76,35 @@ captcha, and each alternative domain maps to one of these host names.
 `/JDownloader/jd/captcha/methods/glm-ocr/` and links `glm-ocr.sh` next to it.
 For each image captcha of those hosts, JDownloader writes `input.png` in that
 directory, runs `glm-ocr.sh` from it and reads the answer from `result.txt`.
-The script removes whitespace from the recognised text and leaves `result.txt`
-empty when Ollama fails. Runs are serialised per method. Empty answers are
-ignored and the captcha falls back to the other solvers.
+The script tries the configured backends in the order of `GLM_OCR_BACKENDS`
+(default `openrouter ollama`):
+
+- `openrouter`, enabled by `OPENROUTER_API_KEY`, sends the image and a prompt
+  describing the captcha to `OPENROUTER_MODEL` through the OpenAI-compatible
+  chat completions API. The default model, `z-ai/glm-5.3-flash`, was chosen
+  by comparing models on saved captchas. Most glm-ocr failures come from the
+  plain vertical bar of the captcha font, which glm-ocr reads as `1`. The
+  bar stands for `l` or `I`, which the image does not tell apart, so no model
+  can solve every captcha.
+- `ollama`, enabled by `OLLAMA_URL`, sends the image to the `glm-ocr` model.
+
+The script removes everything but letters and digits from the answer, since
+models sometimes wrap it in quotes or Markdown. An answer without exactly 6
+characters is requested again, up to `GLM_OCR_ATTEMPTS` times per backend
+(default 5). After the last attempt, or at once when a backend is
+unreachable, times out after 30 seconds or returns an error, the next backend
+is tried. `result.txt` stays empty when every backend fails. glm-ocr on
+Ollama answers the same image the same way, so its retries rarely help. Runs are serialised per
+method. Empty answers are ignored and the captcha falls back to the other
+solvers.
+
+When `GLM_OCR_SAMPLES_DIR` is set, the script also copies each image to
+`<timestamp>_<pid>.png` in that directory and appends the name, the answer,
+the backend and the attempt that gave it, separated by tabs, to
+`answers.tsv`. The verdict of each answer is in the hoster plugin log:
+`Captcha accepted` or `Invalid captcha code`; `Download count files exceed`
+also comes after a valid captcha, but `Download is not available` does not
+tell. Correct answers give labelled images for comparing other OCR models.
 
 To test the OCR manually with an image from the host, run:
 
