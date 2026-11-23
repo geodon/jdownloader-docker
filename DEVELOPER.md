@@ -82,13 +82,19 @@ The script tries the configured backends in the order of `GLM_OCR_BACKENDS`
 - `openrouter`, enabled by `OPENROUTER_API_KEY`, sends the image and a prompt
   describing the captcha to `OPENROUTER_MODEL` through the OpenAI-compatible
   chat completions API. The default model, `z-ai/glm-5.3-flash`, was chosen
-  by comparing models on saved captchas: it reads the plain vertical bar of
-  the captcha font as `l`, which glm-ocr reads as `1`.
+  by comparing models on saved captchas. Most glm-ocr failures come from the
+  plain vertical bar of the captcha font, which glm-ocr reads as `1`. The
+  bar stands for `l` or `I`, which the image does not tell apart, so no model
+  can solve every captcha.
 - `ollama`, enabled by `OLLAMA_URL`, sends the image to the `glm-ocr` model.
 
-A backend that fails, times out after 30 seconds or returns an empty answer
-passes to the next one. The script removes whitespace from the answer and
-leaves `result.txt` empty when every backend fails. Runs are serialised per
+The script removes everything but letters and digits from the answer, since
+models sometimes wrap it in quotes or Markdown. An answer without exactly 6
+characters is requested again, up to `GLM_OCR_ATTEMPTS` times per backend
+(default 5). After the last attempt, or at once when a backend is
+unreachable, times out after 30 seconds or returns an error, the next backend
+is tried. `result.txt` stays empty when every backend fails. glm-ocr on
+Ollama answers the same image the same way, so its retries rarely help. Runs are serialised per
 method. Empty answers are ignored and the captcha falls back to the other
 solvers.
 

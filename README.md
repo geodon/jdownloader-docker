@@ -99,7 +99,8 @@ effect.
 - `OPENROUTER_API_KEY` (optional): OpenRouter API key. When set, k2s.cc, fileboom.me and tezfiles.com image captchas are solved automatically with `OPENROUTER_MODEL`.
 - `OPENROUTER_MODEL` (optional): OpenRouter model for captchas (default `z-ai/glm-5.3-flash`).
 - `OLLAMA_URL` (optional): URL of an Ollama server with the `glm-ocr` model, for example `http://ollama:11434`. When set, the same captchas are solved with it.
-- `GLM_OCR_BACKENDS` (optional): Order in which the captcha solver tries the configured backends, separated by spaces (default `openrouter ollama`). When one fails or returns nothing, the next one is tried. Leave `OPENROUTER_API_KEY` and `OLLAMA_URL` unset to disable captcha solving.
+- `GLM_OCR_BACKENDS` (optional): Order in which the captcha solver tries the configured backends, separated by spaces (default `openrouter ollama`). Answers are reduced to letters and digits; one without 6 characters is requested again, and after the last attempt or an error the next backend is tried.
+- `GLM_OCR_ATTEMPTS` (optional): Requests per backend while the answer does not have 6 characters (default `5`). Leave `OPENROUTER_API_KEY` and `OLLAMA_URL` unset to disable captcha solving.
 
 For credentials, `MYJD_EMAIL_FILE` and `MYJD_PASSWORD_FILE` can supply the values from files. The other variables do not support `_FILE` variants.
 

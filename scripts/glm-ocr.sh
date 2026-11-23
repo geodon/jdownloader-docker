@@ -1,6 +1,6 @@
 #!/bin/sh
-# JAC external method command for JDownloader: recognise the text of
-# input.png and write it without whitespace to result.txt, both in the
+# JAC external method command for JDownloader: recognise the 6 letters and
+# digits of the captcha in input.png and write them to result.txt, both in the
 # working directory.
 #
 # Backends, enabled by their variables:
@@ -8,8 +8,13 @@
 #   with the API key in OPENROUTER_API_KEY.
 # - ollama: glm-ocr on the Ollama server at OLLAMA_URL.
 # GLM_OCR_BACKENDS sets the order to try them (default "openrouter ollama").
-# A backend that fails or returns an empty answer passes to the next one.
+# Everything but letters and digits is removed from the answer. An answer
+# without exactly 6 characters is requested again, up to GLM_OCR_ATTEMPTS
+# times per backend (default 5); then, or when a backend fails, the next
+# backend is tried.
 set -eu
+
+LENGTH=6
 
 PROMPT="This is a captcha image. It contains exactly 6 characters: \
 case-sensitive letters (A-Z, a-z) and digits (0-9), possibly overlapping and \
@@ -40,9 +45,10 @@ query_ollama() {
     | curl -sS --max-time 30 --data-binary @- "$OLLAMA_URL/api/generate"
 }
 
-# Print the answer of backend $1 without whitespace, or fail. Without
-# pipefail, the exit status of the query is the one of curl.
-recognise() {
+# Print the raw answer of backend $1, or fail when it is not configured or
+# returns an error. Without pipefail, the exit status of the query is the one
+# of curl.
+ask() {
   case "$1" in
     openrouter)
       [ -n "${OPENROUTER_API_KEY:-}" ] || return 1
@@ -63,12 +69,7 @@ recognise() {
     echo "OCR error from $1: $error" >&2
     return 1
   fi
-  result=$(printf '%s\n' "$response" | jq -r "$text | gsub(\"\\\\s\"; \"\")") || return 1
-  if [ -z "$result" ]; then
-    echo "Empty answer from $1" >&2
-    return 1
-  fi
-  printf '%s\n' "$result"
+  printf '%s\n' "$response" | jq -r "$text"
 }
 
 # Truncate before querying so a failure does not leave a stale answer.
@@ -76,10 +77,18 @@ exec >result.txt
 
 answer=
 for backend in ${GLM_OCR_BACKENDS:-openrouter ollama}; do
-  if answer=$(recognise "$backend"); then
-    break
-  fi
-  answer=
+  attempt=1
+  while [ "$attempt" -le "${GLM_OCR_ATTEMPTS:-5}" ]; do
+    raw=$(ask "$backend") || break
+    # The model may wrap the answer in quotes or Markdown.
+    answer=$(printf '%s' "$raw" | tr -cd 'A-Za-z0-9')
+    if [ "${#answer}" -eq "$LENGTH" ]; then
+      break 2
+    fi
+    echo "Invalid answer from $backend, attempt $attempt: $raw" >&2
+    answer=
+    attempt=$((attempt + 1))
+  done
 done
 [ -n "$answer" ] || exit 1
 printf '%s\n' "$answer"
